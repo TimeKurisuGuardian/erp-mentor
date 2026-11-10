@@ -1,0 +1,14 @@
+# Ignore large course media and downloads
+курс/
+transcripts/
+*.mp4
+*.zip
+*.pdf
+*.fdmdownload
+__pycache__/
+*.pyc
+
+# Keep internal mentor docs and helper scripts local only
+*.md
+!README.md
+scripts/

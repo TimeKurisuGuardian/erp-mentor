@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Учебный портал: Аналитик 1C / ERP</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --surface: #1e293b;
+      --surface-light: #283548;
+      --surface-border: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --accent: #10b981;
+      --accent-soft: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --purple: #8b5cf6;
+      --purple-soft: rgba(139, 92, 246, 0.15);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 12px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.65;
+      font-size: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--surface-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        position: static !important; /* На телефоне НЕ прилипает и не закрывает экран */
+        padding: 8px 12px;
+        gap: 8px;
+      }
+      .logo-badge {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 1rem !important;
+      }
+      .logo-text h1 {
+        font-size: 0.95rem !important;
+      }
+      .logo-text p {
+        display: none !important; /* Скрываем длинную подпись на телефоне */
+      }
+      .nav-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap !important;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 3px !important;
+      }
+      .nav-tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .nav-btn {
+        padding: 6px 10px !important;
+        font-size: 0.78rem !important;
+        flex-shrink: 0;
+      }
+      main {
+        padding: 1rem 0.75rem !important;
+      }
+      .card {
+        padding: 1rem !important;
+      }
+    }
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    }
+    .logo-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Navigation */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--surface-border);
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn:hover { color: var(--text); background: var(--surface-light); }
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem;
+      width: 100%;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-blue { background: var(--primary-soft); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+    .badge-green { background: var(--accent-soft); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+    .badge-amber { background: var(--warning-soft); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+    .badge-red { background: var(--danger-soft); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+    .badge-purple { background: var(--purple-soft); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
+
+    /* Lesson Sections */
+    .lesson-box {
+      background: #0f172a;
+      border: 1px solid var(--surface-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .lesson-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lesson-text {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Visual Blocks */
+    .highlight-box {
+      background: rgba(59, 130, 246, 0.08);
+      border-left: 4px solid var(--primary);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 0.75rem 0;
+      font-size: 0.92rem;
+    }
+    .highlight-box strong { color: #93c5fd; }
+
+    .analogy-box {
+      background: rgba(139, 92, 246, 0.08);
+      border-left: 4px solid var(--purple);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 0.75rem 0;
+      font-size: 0.92rem;
+    }
+    .analogy-box strong { color: #c084fc; }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.08);
+      border-left: 4px solid var(--warning);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 0.75rem 0;
+      font-size: 0.92rem;
+    }
+    .warning-box strong { color: #fbbf24; }
+
+    /* Steps Flow */
+    .step-list {
+      list-style: none;
+      margin: 0.75rem 0;
+    }
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+    .step-badge {
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      font-size: 0.8rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content {
+      font-size: 0.92rem;
+      color: #cbd5e1;
+    }
+
+    /* Interactive 1C Simulator Screen */
+    .emulator-window {
+      background: #1e293b;
+      border: 2px solid #475569;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      margin: 1.25rem 0;
+    }
+    .emulator-topbar {
+      background: #0f172a;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      font-size: 0.82rem;
+      color: #94a3b8;
+    }
+    .emulator-actions {
+      background: #1e293b;
+      padding: 8px 14px;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+      flex-wrap: wrap;
+    }
+    .btn-1c {
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-1c:hover { background: #e2e8f0; }
+    .btn-1c-primary {
+      background: #eab308;
+      color: #713f12;
+      border-color: #ca8a04;
+      font-weight: 700;
+    }
+    .btn-1c-primary:hover { background: #facc15; }
+
+    .emulator-body {
+      padding: 1rem;
+      background: #0f172a;
+      font-size: 0.85rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+    .form-label { color: #94a3b8; font-size: 0.82rem; }
+    .form-val {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 5px 10px;
+      border-radius: 4px;
+      color: #f8fafc;
+      font-size: 0.85rem;
+    }
+    .form-select {
+      background: #1e293b;
+      border: 1px solid #3b82f6;
+      padding: 5px 10px;
+      border-radius: 4px;
+      color: #f8fafc;
+      font-size: 0.85rem;
+      width: 100%;
+    }
+
+    .emulator-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #1e293b;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .emulator-table th, .emulator-table td {
+      border: 1px solid #334155;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    .emulator-table th { background: #0f172a; color: #94a3b8; font-weight: 600; }
+
+    .emulator-messages {
+      background: #111827;
+      border-top: 1px solid #334155;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      min-height: 48px;
+    }
+
+    /* Jira Layout */
+    .jira-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 850px) {
+      .jira-grid { grid-template-columns: 1fr; }
+    }
+    .ticket-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ticket-card {
+      background: #0f172a;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ticket-card:hover { background: var(--surface-light); }
+    .ticket-card.active {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.08);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .ticket-num {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .ticket-topic {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    /* Homework Box & Template */
+    .hw-box {
+      background: #0f172a;
+      border: 2px dashed #3b82f6;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+    .hw-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hw-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+    .template-box {
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      position: relative;
+      margin-top: 8px;
+      user-select: all;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-copy {
+      background: #334155;
+      color: #f8fafc;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+    .btn-copy:hover { background: #475569; }
+
+    /* Glossary Grid */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 1rem;
+    }
+    .term-card {
+      background: #0f172a;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .term-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+    .term-human {
+      font-size: 0.82rem;
+      color: #a7f3d0;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .term-desc {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    /* Help Banner */
+    .help-banner {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer {
+      border-top: 1px solid var(--surface-border);
+      background: #0f172a;
+      padding: 1.25rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-block">
+      <div class="logo-badge">1С</div>
+      <div class="logo-text">
+        <h1>Учебный портал: Аналитик 1C / ERP</h1>
+        <p>На базе материалов «Клерк: Аналитик 1С 2025» (А. Кудьяров, К. Соболевский, В. Жарова)</p>
+      </div>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-btn active" onclick="showTab('tab-lessons')">📖 Уроки 1, 2, 3 Дня</button>
+      <button class="nav-btn" onclick="showTab('tab-emulator')">🖥️ Тренажер 1С (Живой экран)</button>
+      <button class="nav-btn" onclick="showTab('tab-tickets')">🎫 Симулятор Jira (Тикеты)</button>
+      <button class="nav-btn" onclick="showTab('tab-glossary')">📚 Словарь "На человеческом"</button>
+      <button class="nav-btn" onclick="showTab('tab-hw')">✍️ Домашние задания (ДЗ 1-3)</button>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- TAB 1: УРОКИ И ТЕОРИЯ (РАЗЖЕВАНО НА ПАЛЬЦАХ) -->
+    <div id="tab-lessons" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🎯 Квест Дня 1: Твой маршрут на 30 минут</span>
+          </div>
+          <span class="badge badge-green">4 простых шага • Без спешки</span>
+        </div>
+
+        <!-- Квест-маршрутизатор Дня 1 -->
+        <div style="background: #0f172a; border: 1px solid #3b82f6; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="font-weight: 700; color: #93c5fd; font-size: 1.05rem; margin-bottom: 8px;">
+            Твой план действий на сегодня (День 1):
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+            <div style="background: #1e293b; padding: 10px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+              <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">ШАГ 1 (10 мин)</div>
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f8fafc;">Прочитать Уроки 1 и 2 ниже</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1;">Понять, кто такой аналитик и что такое Справочники/Документы.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 8px; border-left: 3px solid #eab308;">
+              <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">ШАГ 2 (5 мин)</div>
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f8fafc;">Пощелкать тренажер 1С</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1;">Нажать «Провести», получить красную ошибку и исправить её.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 8px; border-left: 3px solid #ef4444;">
+              <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">ШАГ 3 (10 мин)</div>
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f8fafc;">Зайти в Jira и решить тикет</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1;">Открыть JIRA-101 и написать ответ паникующему главбуху.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;">
+              <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">ШАГ 4 (5 мин)</div>
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f8fafc;">Сдать ДЗ куратору в Telegram</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1;">Скопировать готовый шаблон из вкладки ДЗ и отправить в чат.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="lesson-text" style="font-size: 1rem; color: #e2e8f0;">
+          Привет! Этот интерактивный курс создан для легкого старта в IT. Мы не будем учить сложный абстрактный код Python или зубрить скучную теорию. Понимание базового бухучета — это ваша <strong>главная суперсила</strong>. Программисты часто не понимают проводки и налоги, а вы их понимаете. Здесь показано, как эти знания превращаются в востребованную IT-профессию: <strong>Аналитик 1С / Сопровождение ERP</strong>.
+        </p>
+
+        <!-- УРОК 1 -->
+        <div class="lesson-box">
+          <div class="lesson-title">
+            <span>Урок 1. Кто такой аналитик 1С и чем он занимается весь день</span>
+          </div>
+          <p class="lesson-text">
+            Представьте компанию, которая продает кабели, трубы и компьютеры. В ней работают:
+          </p>
+          <ul class="step-list">
+            <li class="step-item">
+              <span class="step-badge">1</span>
+              <div class="step-content"><strong>Менеджер:</strong> находит клиента и выписывает счет в программе.</div>
+            </li>
+            <li class="step-item">
+              <span class="step-badge">2</span>
+              <div class="step-content"><strong>Кладовщик:</strong> собирает товар в коробки и отгружает со склада.</div>
+            </li>
+            <li class="step-item">
+              <span class="step-badge">3</span>
+              <div class="step-content"><strong>Бухгалтер:</strong> считает НДС, налоги и сдает отчетность.</div>
+            </li>
+          </ul>
+
+          <div class="analogy-box">
+            <strong>В чем беда?</strong> Все они сидят в одной программе (1С:ERP). И когда у бухгалтера на экране выскакивает красная ошибка «Документ не проводится!», бухгалтер начинает паниковать. А программисты не хотят разбираться в проводках.
+          </div>
+
+          <p class="lesson-text">
+            <strong>Здесь появляетесь вы — Аналитики:</strong><br>
+            Вам в чат или в таск-трекер (Jira) падает текстовая заявка (тикет). Вы открываете базу, спокойно находите причину ошибки (например: склад забыл оформить приход) и текстом со скриншотом объясняете, что исправить. <strong>Никаких звонков клиентам голосом. Вся работа — вдумчивая переписка текстом.</strong>
+          </p>
+        </div>
+
+        <!-- УРОК 1.1: ЭТАПЫ ПРОЕКТА 1С (ИЗ ЛЕКЦИИ КЛЕРК: К. СОБОЛЕВСКИЙ) -->
+        <div class="lesson-box" style="border-left: 4px solid #f59e0b;">
+          <div class="lesson-title" style="color: #fbbf24;">
+            <span>Урок 1.1. Жизненный цикл IT-проекта: 5 шагов от идеи до работающей ERP</span>
+          </div>
+          <p class="lesson-text">
+            В курсе «Клерк» эксперт Константин Соболевский (25 лет опыта внедрений в Роснефти и Норникеле) выделяет 5 железных этапов любого проекта:
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+            <div style="background: #1e293b; padding: 10px; border-radius: 6px; border-top: 3px solid #64748b;">
+              <strong style="color: #94a3b8; font-size: 0.8rem;">ЭТАП 1</strong>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">Обследование</div>
+              <div style="font-size: 0.78rem; color: #cbd5e1;">Аналитик опрашивает сотрудников: как сейчас устроен учет и где болит.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 6px; border-top: 3px solid #3b82f6;">
+              <strong style="color: #60a5fa; font-size: 0.8rem;">ЭТАП 2</strong>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">GAP-анализ (Разрывы)</div>
+              <div style="font-size: 0.78rem; color: #cbd5e1;">Сравнение: что 1С умеет сразу, а где не хватает кнопки и нужна доработка.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 6px; border-top: 3px solid #8b5cf6;">
+              <strong style="color: #c084fc; font-size: 0.8rem;">ЭТАП 3</strong>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">Разработка по ТЗ</div>
+              <div style="font-size: 0.78rem; color: #cbd5e1;">Программист пишет код строго по техническому заданию аналитика.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 6px; border-top: 3px solid #eab308;">
+              <strong style="color: #facc15; font-size: 0.8rem;">ЭТАП 4</strong>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">Тестирование</div>
+              <div style="font-size: 0.78rem; color: #cbd5e1;">Аналитик лично проверяет доработку на тестовой копии базы.</div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: 6px; border-top: 3px solid #10b981;">
+              <strong style="color: #34d399; font-size: 0.8rem;">ЭТАП 5 (НАШ ФОКУС!)</strong>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">Сопровождение 2-й линии</div>
+              <div style="font-size: 0.78rem; color: #cbd5e1;">Система запущена. Аналитик сидит в Jira и помогает пользователям решать сбои.</div>
+            </div>
+          </div>
+        </div>
+          <p class="lesson-text">
+            В любой 1С все данные делятся всего на 3 простые полочки:
+          </p>
+
+          <div class="highlight-box">
+            <strong>1. Справочники (Существительные):</strong><br>
+            Это карточки с постоянной информацией. Например: карточка клиента «ООО Ромашка», карточка товара «Кабель ВВГ», список складов. Карточка просто лежит в базе, она ничего сама не списывает и денег не просит.
+          </div>
+
+          <div class="highlight-box">
+            <strong>2. Документы (События во времени):</strong><br>
+            Это электронная копия настоящих бумажных документов. У документа ВСЕГДА есть <strong>номер, дата и точное время</strong> (например: «Реализация №15 от 05.11 в 10:30»). В документе написано: КТО, КОМУ, СКОЛЬКО и ПО КАКОЙ ЦЕНЕ продал.
+          </div>
+
+          <div class="highlight-box">
+            <strong>3. Регистры (Память и копилка системы):</strong><br>
+            Это внутренние таблицы, куда программа записывает итоговые остатки и бухгалтерские проводки (Дт / Кт). Из регистров строятся балансы, отчеты директору и Оборотно-сальдовая ведомость (ОСВ).
+          </div>
+        </div>
+
+        <!-- УРОК 2.1: КАРТА КОНФИГУРАЦИЙ 1С (ИЗ КУРСА КЛЕРК 2025) -->
+        <div class="lesson-box" style="border-left: 4px solid #38bdf8;">
+          <div class="lesson-title" style="color: #38bdf8;">
+            <span>Урок 2.1. Зоопарк программ 1С: В какой базе мы работаем?</span>
+          </div>
+          <p class="lesson-text">
+            Платформа <strong>«1С:Предприятие 8»</strong> — это фундамент (как операционная система Windows или Android). А сами программы, в которых работают сотрудники, называются <strong>конфигурациями</strong>:
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 10px;">
+            <div style="background: #1e293b; border: 1px solid #334155; padding: 10px; border-radius: 8px;">
+              <div style="font-weight: 700; color: #fbbf24; font-size: 0.92rem;">1С:Бухгалтерия (БП)</div>
+              <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">
+                <strong>Для кого:</strong> Главбух и бухгалтеры.<br>
+                <strong>Главная цель:</strong> Посчитать налоги и вовремя сдать отчеты в налоговую (ФНС). Складской учет тут простой.
+              </div>
+            </div>
+
+            <div style="background: #1e293b; border: 1px solid #334155; padding: 10px; border-radius: 8px;">
+              <div style="font-weight: 700; color: #34d399; font-size: 0.92rem;">1С:Управление торговлей (УТ)</div>
+              <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">
+                <strong>Для кого:</strong> Менеджеры, закупщики, кладовщики.<br>
+                <strong>Главная цель:</strong> Склады, остатки, прайс-листы, оптовые отгрузки. Бухгалтерских проводок тут вообще нет!
+              </div>
+            </div>
+
+            <div style="background: #1e293b; border: 1px solid #334155; padding: 10px; border-radius: 8px;">
+              <div style="font-weight: 700; color: #c084fc; font-size: 0.92rem;">1С:ЗУП (Зарплата и кадры)</div>
+              <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">
+                <strong>Для кого:</strong> Отдел кадров и расчетчики зарплаты.<br>
+                <strong>Главная цель:</strong> Приказы об отпусках, больничные листы, табели и расчет зарплаты с налогами (НДФЛ, взносы).
+              </div>
+            </div>
+
+            <div style="background: #1e293b; border: 2px solid #3b82f6; padding: 10px; border-radius: 8px;">
+              <div style="font-weight: 700; color: #60a5fa; font-size: 0.92rem;">1С:ERP Управление предприятием 🔥</div>
+              <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">
+                <strong>Для кого:</strong> Средний и крупный бизнес, заводы, холдинги, торговые сети.<br>
+                <strong>Главная цель:</strong> Объединяет торговлю, производство, склады, финансы и бухгалтерию в единый живой организм. Самая высокооплачиваемая система на рынке!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- УРОК 3 -->
+        <div class="lesson-box">
+          <div class="lesson-title">
+            <span>Урок 3. Главная кнопка: почему документ без «Проведения» — просто бумажка</span>
+          </div>
+          <p class="lesson-text">
+            В 1С есть две разные кнопки:
+          </p>
+          <ul class="step-list">
+            <li class="step-item">
+              <span class="step-badge">A</span>
+              <div class="step-content"><strong>Кнопка «Записать» (Черновик):</strong> программа просто сохранила текст. Товар со склада НЕ списался, долг клиента НЕ изменился, проводок НЕТ.</div>
+            </li>
+            <li class="step-item">
+              <span class="step-badge">Б</span>
+              <div class="step-content"><strong>Кнопка «Провести» (Боевое действие):</strong> программа проверяет: «Хватает ли товара на складе?». Если хватает — списывает товар и делает проводки в регистры.</div>
+            </li>
+          </ul>
+
+          <div class="warning-box">
+            <strong>Запомните на всю жизнь:</strong> 40% проблем бухгалтеров возникают из-за того, что они нажали «Записать», забыли нажать «Провести» и кричат: «Куда пропал товар из отчета?!».
+          </div>
+        </div>
+
+        <!-- УРОК 4 -->
+        <div class="lesson-box">
+          <div class="lesson-title">
+            <span>Урок 4. Знакомый Бухучет в теле 1С (Как рождаются проводки)</span>
+          </div>
+          <p class="lesson-text">
+            В институте вас учат писать проводки ручкой в тетрадке. В 1С проводки создаются автоматически, когда пользователь проводит документ:
+          </p>
+          <table class="emulator-table" style="margin-bottom: 12px;">
+            <thead>
+              <tr><th>Документ на экране</th><th>Проводка, которую делает 1С</th><th>Что это значит на простом языке</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Поступление товаров</strong></td>
+                <td><span class="badge badge-green">Дт 41 — Кт 60.01</span></td>
+                <td>Товар лег на наш склад (счет 41), мы стали должны поставщику (счет 60).</td>
+              </tr>
+              <tr>
+                <td><strong>Реализация товаров</strong></td>
+                <td><span class="badge badge-blue">Дт 90.02 — Кт 41</span><br><span class="badge badge-purple">Дт 62.01 — Кт 90.01</span></td>
+                <td>Товар списали со склада по себестоимости. Покупатель стал должен нам денег (счет 62).</td>
+              </tr>
+              <tr>
+                <td><strong>Поступление на р/счет</strong></td>
+                <td><span class="badge badge-amber">Дт 51 — Кт 62.01</span></td>
+                <td>Покупатель перевел деньги на наш банк (счет 51), долг клиента закрылся.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- УРОК 4.1: СПРАВОЧНИК НОМЕНКЛАТУРЫ И ЛОВУШКА ВИДА (ИЗ ЛЕКЦИИ В. ЖАРОВОЙ) -->
+        <div class="lesson-box" style="border-left: 4px solid #ec4899;">
+          <div class="lesson-title" style="color: #f472b6;">
+            <span>Урок 4.1. Справочник Номенклатуры: почему 1С требует склад для интернет-услуг?</span>
+          </div>
+          <p class="lesson-text">
+            В курсе «Клерк» эксперт Вера Жарова разбирает одну из самых коварных ошибок начинающих:
+          </p>
+          <div class="highlight-box">
+            <strong>Реквизит «Вид номенклатуры» определяет логику проводок:</strong>
+            <ul style="padding-left: 20px; margin-top: 6px;">
+              <li>Если в карточке выбран вид <strong>«Товар»</strong>: программа делает проводку <span class="badge badge-green">Дт 41</span> и <strong>ОБЯЗАТЕЛЬНО</strong> проверяет наличие остатка на складе.</li>
+              <li>Если в карточке выбран вид <strong>«Услуга»</strong> (например, «Доставка» или «Аренда»): программа делает проводку сразу на затраты <span class="badge badge-blue">Дт 20 / 26 / 44</span> и <strong>СКЛАД НЕ ТРЕБУЕТ</strong>!</li>
+            </ul>
+          </div>
+          <div class="warning-box">
+            <strong>⚠️ Реальный кейс из практики:</strong> Менеджер завел в справочник позицию «Настройка роутера», но по ошибке оставил вид «Товар». При попытке провести акт программа кричит: <em>«Недостаточно остатка на складе: Настройка роутера — 1 шт»</em>. Неопытный бухгалтер в панике, а аналитик решает проблему за 10 секунд — просто меняет вид номенклатуры на «Услуга».
+          </div>
+        </div>
+
+        <!-- УРОК 5: ДЕНЬ 2 -->
+        <div class="lesson-box" style="border-left: 4px solid #8b5cf6;">
+          <div class="lesson-title" style="color: #c084fc;">
+            <span>Урок 5 (ДЕНЬ 2). Ловушка с НДС: почему документ проведен, а бухгалтер плачет?</span>
+          </div>
+          <p class="lesson-text">
+            В 1С документ «Реализация» фиксирует продажу и долг клиента. Но по законам РФ организация обязана начислить государству <strong>НДС 20%</strong> с каждой продажи (проводка <strong>Дт 90.03 — Кт 68.02</strong>).
+          </p>
+          <div class="warning-box">
+            <strong>⚠️ Классическая ошибка бухгалтеров:</strong><br>
+            Бухгалтер провела накладную реализации, но забыла внизу документа нажать синюю строчку <strong>«Выписать счет-фактуру»</strong>! В итоге проводка по НДС не создалась, документ не попал в Книгу продаж, а налоговая при закрытии квартала выставит штраф.
+          </div>
+          <p class="lesson-text">
+            <strong>Работа аналитика:</strong> Проверить документ реализации в базе ➔ увидеть, что поле счета-фактуры пустое ➔ подсказать бухгалтеру нажать кнопку создания счета-фактуры. Всё, отчетность спасена!
+          </p>
+        </div>
+
+        <!-- УРОК 6: ДЕНЬ 3 -->
+        <div class="lesson-box" style="border-left: 4px solid #10b981;">
+          <div class="lesson-title" style="color: #34d399;">
+            <span>Урок 6 (ДЕНЬ 3). Детектив по сверке расчетов: счет 60 и потерянные 30 000 рублей</span>
+          </div>
+          <p class="lesson-text">
+            Счет <strong>60.01</strong> — это расчеты с поставщиками (теми, у кого мы покупаем товар).
+          </p>
+          <ul class="step-list">
+            <li class="step-item">
+              <span class="step-badge" style="background: #10b981;">+</span>
+              <div class="step-content"><strong>Кредит 60:</strong> наш долг растет, когда поставщик привез товар (документ «Поступление товаров»).</div>
+            </li>
+            <li class="step-item">
+              <span class="step-badge" style="background: #3b82f6;">-</span>
+              <div class="step-content"><strong>Дебет 60:</strong> наш долг уменьшается, когда мы перевели поставщику деньги со счета («Списание с расчетного счета»).</div>
+            </li>
+          </ul>
+          <div class="highlight-box">
+            <strong>💡 Секрет поиска расхождений:</strong><br>
+            Если поставщик говорит: «Вы нам должны 150 000 руб», а в нашей ОСВ написано: «Долг 120 000 руб» — значит, в нашей базе не хватает 30 000 руб долга. В 9 случаях из 10 оператор на складе создал поступление на 30 000 руб, но <strong>не нажал кнопку «Провести»</strong>, и документ остался черновиком!
+          </div>
+        </div>
+
+        <div class="help-banner">
+          <div>
+            <div style="font-weight: 700; font-size: 1.05rem; color: #93c5fd;">Уроки 1 и 2 прочитаны? Отлично!</div>
+            <div style="font-size: 0.88rem; color: #cbd5e1;">Переходим к <strong>Шагу 2</strong>: давайте своими руками вызовем ошибку в 1С и исправим её.</div>
+          </div>
+          <button class="btn" onclick="showTab('tab-emulator')">Шаг 2: В тренажер 1С ➔</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: ЭМУЛЯТОР 1С (ИНТЕРАКТИВНЫЙ ЖИВОЙ ЭКРАН) -->
+    <div id="tab-emulator" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🖥️ Интерактивный эмулятор: Документ «Реализация товаров»</span>
+          </div>
+          <span class="badge badge-blue">Интерактивная практика прямо в браузере</span>
+        </div>
+
+        <p class="lesson-text">
+          Перед вами точная модель настоящего документа 1С. Попробуйте нажать кнопку <strong>«Провести»</strong> и посмотрите, что произойдет в окне сообщений внизу!
+        </p>
+
+        <!-- Окно 1С -->
+        <div class="emulator-window">
+          <div class="emulator-topbar">
+            <span>1С:Предприятие 8.3 — Документ: Реализация (акт, накладная) № 45</span>
+            <span id="doc-status-badge" class="badge badge-amber">● Черновик (Не проведен)</span>
+          </div>
+
+          <div class="emulator-actions">
+            <button class="btn-1c btn-1c-primary" onclick="simPostDocument()">⚙️ Провести</button>
+            <button class="btn-1c" onclick="simSaveDraft()">💾 Записать</button>
+            <button class="btn-1c" onclick="simShowMovements()">📊 Движения документа (Дт/Кт)</button>
+            <button class="btn-1c" style="margin-left: auto;" onclick="resetSim()">🔄 Сбросить состояние</button>
+          </div>
+
+          <div class="emulator-body">
+            <div class="form-row">
+              <div class="form-label">Номер и Дата:</div>
+              <div class="form-val">№ 45 от 05.11.2026, время 10:15:00</div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">Контрагент (Клиент):</div>
+              <div class="form-val">ООО "Север" (ИНН 7701234567)</div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">Склад отгрузки:</div>
+              <div>
+                <select id="sim-sklad" class="form-select" onchange="resetMessages()">
+                  <option value="main">Основной склад (В наличии по учету: 85 м)</option>
+                  <option value="transit">Транзитный склад (В наличии по учету: 120 м)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Таблица товаров -->
+            <table class="emulator-table">
+              <thead>
+                <tr>
+                  <th style="width: 30px;">№</th>
+                  <th>Номенклатура (Товар)</th>
+                  <th style="width: 100px;">Количество</th>
+                  <th style="width: 100px;">Цена</th>
+                  <th style="width: 120px;">Сумма</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><strong>Кабель ВВГ 3х2.5</strong> (Код: 00-001428)</td>
+                  <td>
+                    <input type="number" id="sim-qty" value="100" style="width: 70px; background: #0f172a; color: white; border: 1px solid #3b82f6; border-radius: 4px; padding: 2px 6px;" onchange="resetMessages()"> м
+                  </td>
+                  <td>120.00 ₽</td>
+                  <td id="sim-sum">12 000.00 ₽</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Окно сообщений 1С -->
+          <div class="emulator-messages" id="sim-console">
+            <span style="color: #64748b;">// Окно служебных сообщений 1С. Нажмите кнопку «Провести» выше...</span>
+          </div>
+        </div>
+
+        <!-- Разбор аналитика -->
+        <div class="highlight-box" style="margin-top: 1rem;">
+          <strong>💡 Аналитическая подсказка к эксперименту:</strong><br>
+          1. Сначала нажмите <strong>«Провести»</strong> при значении 100 метров на «Основном складе». Вы увидите реальную ошибку, от которой плачут бухгалтеры.<br>
+          2. Затем поменяйте Склад на «Транзитный склад» (или измените количество со 100 на 80 метров) и нажмите «Провести» снова. Посмотрите, как документ становится проведенным!
+        </div>
+
+        <div class="help-banner" style="margin-top: 1rem;">
+          <div>
+            <div style="font-weight: 700; font-size: 1.05rem; color: #a7f3d0;">Попробовали провести документ?</div>
+            <div style="font-size: 0.88rem; color: #cbd5e1;">Переходим к <strong>Шагу 3</strong>: открываем тикет в Jira от живого бухгалтера и решаем проблему!</div>
+          </div>
+          <button class="btn" style="background: #10b981;" onclick="showTab('tab-tickets')">Шаг 3: Перейти в Jira ➔</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: СИМУЛЯТОР JIRA (ТИКЕТЫ) -->
+    <div id="tab-tickets" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🎫 Симулятор ServiceDesk / Jira: Решаем задачи как на работе</span>
+          </div>
+          <span class="badge badge-amber">3 боевых кейса</span>
+        </div>
+
+        <p class="lesson-text">
+          В IT-компаниях не звонят по телефону. Все задачи приходят в виде <strong>тикетов</strong>. Выберите тикет слева, прочитайте жалобу сотрудника и сформулируйте решение.
+        </p>
+
+        <div class="jira-grid">
+          <!-- Список тикетов -->
+          <div class="ticket-nav">
+            <div class="ticket-card active" onclick="loadTicket(1)">
+              <div class="ticket-num">
+                <span>JIRA-101</span>
+                <span class="badge badge-red">Срочно</span>
+              </div>
+              <div class="ticket-topic">Не проводится реализация ООО "Север" (нехватка остатка)</div>
+            </div>
+
+            <div class="ticket-card" onclick="loadTicket(2)">
+              <div class="ticket-num">
+                <span>JIRA-102</span>
+                <span class="badge badge-amber">Средний</span>
+              </div>
+              <div class="ticket-topic">Расхождение 30 000 ₽ в акте сверки с ООО "Альфа"</div>
+            </div>
+
+            <div class="ticket-card" onclick="loadTicket(3)">
+              <div class="ticket-num">
+                <span>JIRA-103</span>
+                <span class="badge badge-blue">ТЗ программисту</span>
+              </div>
+              <div class="ticket-topic">Доработка макета ТОРГ-12: артикул и масса брутто</div>
+            </div>
+
+            <div class="ticket-card" onclick="loadTicket(4)">
+              <div class="ticket-num">
+                <span>JIRA-104</span>
+                <span class="badge badge-red">Номенклатура</span>
+              </div>
+              <div class="ticket-topic">Ошибка склада при реализации услуги «Настройка интернета»</div>
+            </div>
+          </div>
+
+          <!-- Рабочее место тикета -->
+          <div id="ticket-detail-view" style="background: #0f172a; border: 1px solid var(--surface-border); border-radius: 10px; padding: 1.25rem;">
+            <!-- Динамически заполняется через JS -->
+          </div>
+        </div>
+
+        <div class="help-banner" style="margin-top: 1.5rem;">
+          <div>
+            <div style="font-weight: 700; font-size: 1.05rem; color: #fbcfe8;">Тикет решен и решение проверено?</div>
+            <div style="font-size: 0.88rem; color: #cbd5e1;">Остался <strong>Шаг 4</strong>: скопировать шаблон домашнего задания и отправить куратору в Telegram.</div>
+          </div>
+          <button class="btn" style="background: #ec4899;" onclick="showTab('tab-hw')">Шаг 4: Сдать ДЗ ➔</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: СЛОВАРЬ "НА ЧЕЛОВЕЧЕСКОМ" -->
+    <div id="tab-glossary" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📚 Словарь аналитика: Перевод с заумного на человеческий</span>
+          </div>
+          <span class="badge badge-purple">Шпаргалка</span>
+        </div>
+
+        <p class="lesson-text">
+          Если встретите незнакомое слово в программе или в переписке — не пугайтесь. Вот простой перевод каждого IT-термина:
+        </p>
+
+        <div class="glossary-grid">
+          <div class="term-card">
+            <div class="term-name">Тикет (Ticket) / Заявка</div>
+            <div class="term-human">= Электронное письмо с проблемой</div>
+            <div class="term-desc">Вопрос или задача в программе Jira, которую написал сотрудник (бухгалтер, кладовщик или директор).</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">Контрагент</div>
+            <div class="term-human">= Другая компания или партнер</div>
+            <div class="term-desc">Тот, с кем мы ведем бизнес. Бывает двух видов: <strong>Поставщик</strong> (мы у него покупаем) или <strong>Покупатель</strong> (мы ему продаем).</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">Номенклатура</div>
+            <div class="term-human">= Список товаров или услуг</div>
+            <div class="term-desc">Каталог всего, чем торгует компания: кабель, болты, столы, доставка, консультации.</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">Реквизит</div>
+            <div class="term-human">= Поле для заполнения</div>
+            <div class="term-desc">Строчка или ячейка на экране. Например, реквизиты документа: Номер, Дата, Склад, Организация.</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">Сторно (Сторнирование)</div>
+            <div class="term-human">= Отмена ошибки со знаком минус</div>
+            <div class="term-desc">Бухгалтерский способ исправить старую ошибку: вместо стирания старой записи вносится такая же запись с минусом.</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">ТЗ (Техническое задание)</div>
+            <div class="term-human">= Инструкция для программиста</div>
+            <div class="term-desc">Четкий текст, который пишет аналитик: «Возьми данные из поля А и выведи их в колонку Б».</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">ОСВ (Оборотка)</div>
+            <div class="term-human">= Главная рентгеновская таблица</div>
+            <div class="term-desc">Оборотно-сальдовая ведомость. Показывает: сколько было на начало (сальдо), сколько пришло/ушло (обороты) и сколько осталось.</div>
+          </div>
+
+          <div class="term-card">
+            <div class="term-name">Партия товара</div>
+            <div class="term-human">= Конкретный завоз товара</div>
+            <div class="term-desc">Один и тот же кабель в понедельник купили по 100 руб, а в пятницу — по 120 руб. Программа должна знать, из какой именно партии списывать себестоимость.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 5: ДОМАШНИЕ ЗАДАНИЯ (ДЗ) С ШАБЛОНАМИ -->
+    <div id="tab-hw" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>✍️ Практические задания: Первые 3 дня (Шаблоны для отправки куратору)</span>
+          </div>
+          <span class="badge badge-green">3 готовых шаблона • Без лишней писанины</span>
+        </div>
+
+        <p class="lesson-text">
+          Чтобы сдать задание, не нужно писать поэмы! Нажмите кнопку <strong>«Скопировать шаблон»</strong> нужного дня, вставьте текст в Telegram-чат с куратором, впишите свои ответы и отправьте.
+        </p>
+
+        <!-- ДЗ ДЕНЬ 1 -->
+        <div class="hw-box">
+          <div class="hw-header">
+            <div class="hw-title">🌟 ДЕНЬ 1: Разложить по полочкам 1С + Ответ по кабелю (JIRA-101)</div>
+            <button class="btn btn-copy" onclick="copyTemplate('tpl-hw1')">📋 Скопировать шаблон Дня 1</button>
+          </div>
+          <p class="lesson-text">
+            1) Разложите 5 объектов (Справочник / Документ / Регистр).<br>
+            2) Напишите вежливый ответ главбуху Светлане Викторовне, почему не проводится реализация кабеля.
+          </p>
+          <div class="template-box" id="tpl-hw1">Привет! Мое ДЗ за ДЕНЬ 1:
+
+ЧАСТЬ 1: Полочки 1С:
+1. ООО "Альфа" — это: [Справочник / Документ / Регистр]
+2. Накладная №45 от 05.11 — это: [...]
+3. Остаток 85 метров на складе — это: [...]
+4. Договор поставки №12 — это: [...]
+5. Списание с расчетного счета — это: [...]
+
+ЧАСТЬ 2: Ответ главному бухгалтеру (JIRA-101):
+«Здравствуйте, Светлана Викторовна!
+Реализация не проводится, потому что: [напиши причину].
+Чтобы документ провелся, нужно: [напиши, что сделать].»</div>
+        </div>
+
+        <!-- ДЗ ДЕНЬ 2 -->
+        <div class="hw-box" style="border-color: #8b5cf6;">
+          <div class="hw-header">
+            <div class="hw-title" style="color: #c084fc;">🌟 ДЕНЬ 2: Ловушка с НДС (Счет-фактура и проводка 90.03 / 68.02)</div>
+            <button class="btn btn-copy" onclick="copyTemplate('tpl-hw2')">📋 Скопировать шаблон Дня 2</button>
+          </div>
+          <p class="lesson-text">
+            Бухгалтер по налогам пишет: <em>«Я провела реализацию ООО "Вектор" на 240 000 руб, но сумма НДС не появилась в Книге продаж! Программа зависла!»</em>.
+            Что произошло и куда бухгалтеру нажать?
+          </p>
+          <div class="template-box" id="tpl-hw2">Привет! Мое ДЗ за ДЕНЬ 2:
+
+Ответ бухгалтеру по налогам:
+«Добрый день! Программа не сломалась.
+В Книгу продаж реализация не попала, потому что: [напиши причину, связанную со счетом-фактурой].
+Из-за этого 1С не сформировала проводку: Дт 90.03 — Кт 68.02.
+Чтобы исправить: откройте документ реализации и в самом низу нажмите ссылку: [напиши, какую ссылку нажать].
+После этого счет-фактура создастся и сумма сразу появится в Книге продаж!»</div>
+        </div>
+
+        <!-- ДЗ ДЕНЬ 3 -->
+        <div class="hw-box" style="border-color: #10b981;">
+          <div class="hw-header">
+            <div class="hw-title" style="color: #34d399;">🌟 ДЕНЬ 3: Детектив по счету 60 (Поиск расхождения на 30 000 руб)</div>
+            <button class="btn btn-copy" onclick="copyTemplate('tpl-hw3')">📋 Скопировать шаблон Дня 3</button>
+          </div>
+          <p class="lesson-text">
+            Финменеджер Игорь не может понять, почему по акту сверки наш долг перед ООО "Альфа" 120 000 руб, а они требуют 150 000 руб.
+            Изучите карточку счета 60.01 из вкладки «Симулятор Jira (JIRA-102)» и напишите Игорю результат расследования.
+          </p>
+          <div class="template-box" id="tpl-hw3">Привет! Мое ДЗ за ДЕНЬ 3:
+
+Ответ финменеджеру Игорю по акту сверки:
+«Игорь, привет! Я нашла причину расхождения на 30 000 рублей.
+В нашей базе документ: [напиши номер и дату документа на 30 000 руб] находится в статусе [напиши статус: проведен или черновик?].
+Из-за этого наш долг в базе занижен на 30 000 руб.
+Что нужно сделать: [напиши действие].
+После этого сальдо долга станет ровно 150 000 руб и сверка сойдется!»</div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Help Banner at Bottom -->
+  <div style="max-width: 1200px; margin: 0 auto 2rem auto; padding: 0 1.25rem; width: 100%;">
+    <div class="help-banner">
+      <div>
+        <div style="font-weight: 700; color: #f8fafc; font-size: 1rem;">Есть вопрос или непонятное слово?</div>
+        <div style="color: #94a3b8; font-size: 0.85rem;">Куратор на связи в Telegram. Спрашивайте в любой момент — глупых вопросов не бывает!</div>
+      </div>
+      <span class="badge badge-blue" style="font-size: 0.85rem; padding: 6px 12px;">Асинхронный темп • Без спешки</span>
+    </div>
+  </div>
+
+  <footer>
+    ERP Mentor Sandbox | Учебный симулятор сопровождения 1С/ERP
+  </footer>
+
+  <script>
+    // Telegram Bot Configuration
+    const TG_BOT_TOKEN = "8699379029:AAHZAKdOxFcR4Tqqo_fiI7hH9cOLj_TQ3HA";
+    const TG_CHAT_ID = "524441763";
+
+    async function sendTelegramNotification(studentName, ticketId, answerText) {
+      if (!answerText.trim()) {
+        alert("Пожалуйста, сначала напишите ваш ответ!");
+        return false;
+      }
+      const text = `🔔 НОВОЕ РЕШЕНИЕ С САЙТА ERP-MENTOR!\n` +
+                   `👤 Студент: ${studentName || "Не указано"}\n` +
+                   `🎫 Задание / Тикет: ${ticketId}\n` +
+                   `📅 Время: ${new Date().toLocaleTimeString('ru-RU')}\n\n` +
+                   `✍️ Ответ:\n${answerText}`;
+
+      try {
+        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: TG_CHAT_ID, text: text })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert(`✅ Отлично! Твое решение по ${ticketId} успешно отправлено куратору в Telegram!`);
+          return true;
+        } else {
+          console.error("Telegram API error:", data);
+          alert("Не удалось отправить боту. Скопируй ответ и отправь куратору в чат!");
+          return false;
+        }
+      } catch (err) {
+        console.error("Network error:", err);
+        alert("Не удалось отправить боту. Скопируй ответ и отправь куратору в чат!");
+        return false;
+      }
+    }
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Copy template
+    function copyTemplate(elemId) {
+      const text = document.getElementById(elemId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Шаблон скопирован в буфер обмена! Теперь просто вставьте его в Telegram-чат с куратором.");
+      }).catch(() => {
+        alert("Выделите текст шаблона и скопируйте его через Ctrl+C");
+      });
+    }
+
+    // Emulator Logic
+    let isPosted = false;
+
+    function resetMessages() {
+      const con = document.getElementById('sim-console');
+      con.innerHTML = `<span style="color: #64748b;">// Параметры изменены. Нажмите «Провести», чтобы проверить результат...</span>`;
+      const badge = document.getElementById('doc-status-badge');
+      badge.className = "badge badge-amber";
+      badge.innerText = "● Не проведен";
+      isPosted = false;
+    }
+
+    function simSaveDraft() {
+      const con = document.getElementById('sim-console');
+      con.innerHTML = `<span style="color: #60a5fa;">[10:15:02] Документ 'Реализация товаров №45' успешно ЗАПИСАН в базу как черновик.</span><br>
+<span style="color: #94a3b8;">Внимание: Проводки НЕ сформированы. Остатки на складе НЕ изменились.</span>`;
+      const badge = document.getElementById('doc-status-badge');
+      badge.className = "badge badge-amber";
+      badge.innerText = "● Записан (Черновик)";
+      isPosted = false;
+    }
+
+    function simPostDocument() {
+      const qty = parseInt(document.getElementById('sim-qty').value) || 0;
+      const sklad = document.getElementById('sim-sklad').value;
+      const con = document.getElementById('sim-console');
+      const badge = document.getElementById('doc-status-badge');
+
+      if (sklad === 'main' && qty > 85) {
+        const diff = qty - 85;
+        con.innerHTML = `<span style="color: #ef4444; font-weight: bold;">[ОШИБКА ПРОВЕДЕНИЯ]:</span><br>
+<span style="color: #fca5a5;">Недостаточно остатка по номенклатуре "Кабель ВВГ 3х2.5" на складе "Основной склад"!<br>
+Требуется списать: ${qty} м | В наличии по учету: 85 м | Дефицит: ${diff} м.<br>
+Действие отменено! Документ не проведен.</span>`;
+        badge.className = "badge badge-red";
+        badge.innerText = "✕ Ошибка проведения";
+        isPosted = false;
+      } else {
+        const sum = (qty * 120).toLocaleString('ru-RU');
+        con.innerHTML = `<span style="color: #10b981; font-weight: bold;">[УСПЕХ]: Документ успешно ПРОВЕДЕН!</span><br>
+<span style="color: #a7f3d0;">Сформированы движения по регистрам:<br>
+1. Регистр накопления "Товары на складах": расход ${qty} м.<br>
+2. Бухгалтерская проводка: Дт 90.02.1 — Кт 41.01 (Списание себестоимости).<br>
+3. Бухгалтерская проводка: Дт 62.01 — Кт 90.01.1 (Выручка: ${sum} ₽).</span>`;
+        badge.className = "badge badge-green";
+        badge.innerText = "✓ Проведен";
+        isPosted = true;
+      }
+    }
+
+    function simShowMovements() {
+      const con = document.getElementById('sim-console');
+      if (!isPosted) {
+        con.innerHTML = `<span style="color: #f59e0b;">У документа нет движений, потому что он еще не проведен! Сначала нажмите «Провести».</span>`;
+      } else {
+        con.innerHTML = `<span style="color: #38bdf8; font-weight: bold;">Журнал проводок документа №45:</span><br>
+1. Дт 90.02.1 (Себестоимость продаж) — Кт 41.01 (Товары на складах): списано 85 м.<br>
+2. Дт 62.01 (Расчеты с покупателями) — Кт 90.01.1 (Выручка от продаж): 12 000.00 ₽.`;
+      }
+    }
+
+    function resetSim() {
+      document.getElementById('sim-qty').value = 100;
+      document.getElementById('sim-sklad').value = 'main';
+      resetMessages();
+    }
+
+    // Tickets simulator logic
+    const ticketData = {
+      1: {
+        id: "JIRA-101",
+        author: "Светлана Викторовна (Главный бухгалтер)",
+        badge: "badge-red",
+        badgeText: "Срочно",
+        title: "Не проводится реализация товаров ООО 'Север'",
+        body: "Здравствуйте! Документ Реализация №45 от 05.11 не проводится, выскакивает красное окно: 'По номенклатуре Кабель ВВГ 3х2.5 не хватает 15 метров на Основном складе'. Срочно разберитесь, машина стоит на погрузке у ворот!",
+        dbData: "База 1С:ERP:\n- Документ: Реализация №45 от 05.11.2026, 10:15\n- Требуется отгрузить: 100 м с 'Основного склада'\n- Остаток на 'Основном складе' на 10:15: 85 м (не хватает 15 м)\n- НА ДРУГОМ СКЛАДЕ ('Транзитный склад'): числится 120 м!\n- Поступление от поставщика на 'Основной склад': вбито тем же днем, но временем 16:00 (на 50 м).",
+        solution: "Решение аналитика:\nПричина: Реализация создана в 10:15, а приход от поставщика оформлен позже (в 16:00). Либо кабель лежит на другом складе (Транзитном).\n\nВарианты решения для ответа:\n1) Переставить склад в документе на 'Транзитный склад' (где есть 120 м).\n2) Переставить время в документе поступления на утреннее (например, 09:00), чтобы приход был раньше отгрузки."
+      },
+      2: {
+        id: "JIRA-102",
+        author: "Игорь (Финансовый менеджер)",
+        badge: "badge-amber",
+        badgeText: "Средний",
+        title: "Расхождение в акте сверки с поставщиком ООО 'Альфа'",
+        body: "По нашему учету мы должны Альфе 120 000 руб, а они прислали свой акт сверки, где наш долг 150 000 руб. Не сходится ровно на 30 000 руб за октябрь. Найдите, в чем косяк, мне нужно шефу согласовать оплату.",
+        dbData: "База 1С:ERP (Карточка счета 60.01 за Октябрь):\n- 05.10 Поступление №64: Кт 60.01 — 50 000 ₽\n- 12.10 Оплата через банк №302: Дт 60.01 — 50 000 ₽\n- 18.10 Поступление №89 на сумму 30 000 ₽: [СТАТУС: ЧЕРНОВИК / НЕ ПРОВЕДЕН!]\n- 25.10 Поступление №95: Кт 60.01 — 120 000 ₽\nИтог в нашей ОСВ: долг 120 000 ₽ (потому что документ на 30 000 не проведен).",
+        solution: "Решение аналитика:\nПричина: Поступление товаров №89 от 18.10 на сумму 30 000 руб вбито в базу, но не проведено (осталось черновиком). Поэтому наш долг перед Альфой в базе занижен на 30 000 руб.\n\nДействие: Открыть Поступление №89 и нажать кнопку 'Провести'. Сальдо долга станет 150 000 руб и сверка сойдется копейка в копейку."
+      },
+      3: {
+        id: "JIRA-103",
+        author: "Михаил (Руководитель отдела логистики)",
+        badge: "badge-blue",
+        badgeText: "ТЗ разработчику",
+        title: "Доработка печатной формы ТОРГ-12",
+        body: "Водители путаются при разгрузке. Нам нужно, чтобы в стандартной накладной ТОРГ-12 рядом с названием товара печатался артикул поставщика из карточки товара, а внизу крупно писался общий вес груза. Сделайте понятно для программиста 1С.",
+        dbData: "Требования к доработке:\n1. Печатная форма: ТОРГ-12 (документ Реализация)\n2. Колонка 2 (Товар): выводить '[Артикул] Наименование'\n3. Подвал таблицы: поле 'Масса брутто' = Количество * Вес из карточки товара",
+        solution: "ТЗ для 1С-разработчика:\n1. Объект: Внешняя печатная форма ТОРГ-12 документа 'Реализация товаров и услуг'.\n2. Требование к колонке 2: В ячейку наименования подтягивать значение реквизита 'Артикул' из Справочника 'Номенклатура'.\n3. Требование к подвалу: В поле 'Масса брутто' выводить сумму произведения (ТабличнаяЧасть.Количество * Номенклатура.Вес).\n4. Приемка: Сформировать печать накладной и проверить вывод артикула."
+      },
+      4: {
+        id: "JIRA-104",
+        author: "Анна (Менеджер по работе с корпоративными клиентами)",
+        badge: "badge-red",
+        badgeText: "Ошибка 1С",
+        title: "Программа требует склад для услуги 'Настройка сети и роутера'!",
+        body: "Я выставляю клиенту ООО 'Спектр' акт на услугу 'Настройка офисной сети' на 25 000 руб. Нажимаю 'Провести', а программа выдает красную ошибку: 'Недостаточно остатка на складе Основной склад: Настройка офисной сети 1 шт'. Какой еще склад для услуги?! Почините 1С, она сошла с ума!",
+        dbData: "База 1С:ERP:\n- Документ: Реализация товаров и услуг №68\n- Табличная часть 'Товары': Строка 1 — Номенклатура: 'Настройка офисной сети', 1 шт.\n- Заходим в Справочник 'Номенклатура' -> Карточка 'Настройка офисной сети':\n  * Реквизит 'Вид номенклатуры': [ТОВАР] (вместо 'Услуга'!)\n  * Счет учета: 41.01 (Товары на складах)",
+        solution: "Решение аналитика (по материалам лекции В. Жаровой):\nПричина: В карточке номенклатуры 'Настройка офисной сети' по ошибке установлен вид номенклатуры 'Товар'. Поэтому 1С считает услугу материальной вещью, пытается списать ее со счета 41 и проверяет наличие на складе.\n\nЧто нужно сделать:\n1) Открыть Справочник 'Номенклатура', найти 'Настройка офисной сети'.\n2) Изменить поле 'Вид номенклатуры' с 'Товар' на 'Услуга'. Либо перенести позицию в табличную часть 'Услуги' документа реализации.\n3) Нажать 'Провести' — программа сделает проводку сразу на счет затрат без проверки склада, и документ успешно проведется!"
+      }
+    };
+
+    function loadTicket(num) {
+      document.querySelectorAll('.ticket-card').forEach((el, idx) => {
+        if (idx === num - 1) el.classList.add('active');
+        else el.classList.remove('active');
+      });
+
+      const t = ticketData[num];
+      const view = document.getElementById('ticket-detail-view');
+      const savedName = (localStorage.getItem('erp_student_name') || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      view.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 0.82rem; color: #94a3b8; font-weight: 700;">${t.id} • ${t.author}</span>
+          <span class="badge ${t.badge}">${t.badgeText}</span>
+        </div>
+        <div style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 8px;">${t.title}</div>
+        <div style="background: #1e293b; border-left: 3px solid #3b82f6; padding: 10px; border-radius: 4px; font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px; line-height: 1.5;">
+          ${t.body}
+        </div>
+
+        <div style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">
+          Что вы видите в базе 1С:
+        </div>
+        <div style="background: #111827; border: 1px solid #374151; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; color: #e2e8f0; white-space: pre-wrap; margin-bottom: 12px;">
+${t.dbData}
+        </div>
+
+        <div style="margin-top: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa;">
+              ✍️ Ваше решение (ответ пользователю):
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.78rem; color: #94a3b8;">Кто сдает:</span>
+              <input id="ticket-student-${num}" type="text" placeholder="Ваше имя" value="${savedName}" oninput="localStorage.setItem('erp_student_name', this.value)" style="background: #1e293b; color: white; border: 1px solid #3b82f6; border-radius: 4px; padding: 3px 8px; font-size: 0.8rem; width: 130px;">
+            </div>
+          </div>
+          <textarea id="ticket-reply-${num}" class="custom-input" style="width: 100%; min-height: 70px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white; padding: 8px; font-size: 0.9rem;" placeholder="Напишите понятный ответ, в чем причина и что исправить..."></textarea>
+          
+          <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+            <button class="btn" style="background: #2563eb;" onclick="submitTicket(${num})">🚀 Отправить куратору в Telegram</button>
+            <button class="btn btn-secondary" onclick="revealSolution(${num})">👁️ Сверить с эталоном</button>
+          </div>
+
+          <div id="ticket-solution-${num}" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; padding: 12px; margin-top: 10px; font-size: 0.85rem; color: #e2e8f0; white-space: pre-wrap;">
+${t.solution}
+          </div>
+        </div>
+      `;
+    }
+
+    function revealSolution(num) {
+      const sol = document.getElementById(`ticket-solution-${num}`);
+      sol.style.display = 'block';
+      sol.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function submitTicket(num) {
+      const studentInput = document.getElementById(`ticket-student-${num}`);
+      const student = studentInput.value.trim();
+      if (!student) {
+        alert("Пожалуйста, укажите ваше имя в поле «Кто сдает»!");
+        studentInput.focus();
+        return;
+      }
+      localStorage.setItem('erp_student_name', student);
+      const answer = document.getElementById(`ticket-reply-${num}`).value;
+      const t = ticketData[num];
+      await sendTelegramNotification(student, `${t.id}: ${t.title}`, answer);
+    }
+
+    // Initialize first ticket on load
+    loadTicket(1);
+  </script>
+</body>
+</html>
